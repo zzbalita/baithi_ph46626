@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchBaiThi, addBaiThi, updateBaiThi, deleteBaiThi } from '../actions/baithiActions';
+import { fetchQLDiem, addQLDiem, updateQLDiem, deleteQLDiem } from '../actions/baithiActions';
 
 const baiThiSlice = createSlice({
-    name: 'baiThi',
+    name: 'qlDiem',
     initialState: {
         items: [],
         loading: false,
@@ -11,54 +11,54 @@ const baiThiSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(fetchBaiThi.pending, (state) => {
+            .addCase(fetchQLDiem.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(fetchBaiThi.fulfilled, (state, action) => {
+            .addCase(fetchQLDiem.fulfilled, (state, action) => {
                 state.loading = false;
                 state.items = action.payload;
             })
-            .addCase(fetchBaiThi.rejected, (state, action) => {
+            .addCase(fetchQLDiem.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             })
-            .addCase(addBaiThi.pending, (state) => {
+            .addCase(addQLDiem.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(addBaiThi.fulfilled, (state, action) => {
+            .addCase(addQLDiem.fulfilled, (state, action) => {
                 state.loading = false;
                 state.items.push(action.payload);
             })
-            .addCase(addBaiThi.rejected, (state, action) => {
+            .addCase(addQLDiem.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             })
-            .addCase(updateBaiThi.pending, (state) => {
+            .addCase(updateQLDiem.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(updateBaiThi.fulfilled, (state, action) => {
+            .addCase(updateQLDiem.fulfilled, (state, action) => {
                 state.loading = false;
                 const index = state.items.findIndex((item) => item.id === action.payload.id);
                 if (index !== -1) {
                     state.items[index] = action.payload;
                 }
             })
-            .addCase(updateBaiThi.rejected, (state, action) => {
+            .addCase(updateQLDiem.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             })
-            .addCase(deleteBaiThi.pending, (state) => {
+            .addCase(deleteQLDiem.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(deleteBaiThi.fulfilled, (state, action) => {
+            .addCase(deleteQLDiem.fulfilled, (state, action) => {
                 state.loading = false;
                 state.items = state.items.filter((item) => item.id !== action.payload);
             })
-            .addCase(deleteBaiThi.rejected, (state, action) => {
+            .addCase(deleteQLDiem.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             });
@@ -67,3 +67,4 @@ const baiThiSlice = createSlice({
 
 export const baithiReducer = baiThiSlice.reducer;
 export default baithiReducer;
+    

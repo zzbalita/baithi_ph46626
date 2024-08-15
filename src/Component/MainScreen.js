@@ -1,64 +1,79 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, Modal, Pressable, Image } from 'react-native';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, Modal, Pressable, Image, Alert } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBaiThi, deleteBaiThi } from '../redux/actions/baithiActions';
+import { fetchQLDiem } from '../redux/actions/baithiActions';
 import ListItem from '../Component/ListItem';
 import Banner from '../Component/Banner';
 
 const MainScreen = ({ navigation }) => {
     const dispatch = useDispatch();
-    const baiThis = useSelector(state => state.baiThi.items);
-    const loading = useSelector(state => state.baiThi.loading);
+    const Diems = useSelector(state => state.qlDiem.items);
+    const loading = useSelector(state => state.qlDiem.loading);
     const [refreshing, setRefreshing] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedThi, setSelectedThi] = useState(null);
 
+    const [maSV, setMaSV] = useState('');
+    const [hoTen, setHoTen] = useState('');
+    const [hinhAnh, setHinhAnh] = useState('');
+    const [maMon, setMaMon] = useState('');
+    const [diemQuaTrinh, setDiemQuaTrinh] = useState('');
+    const [diemThi, setDiemThi] = useState('');
+
     useEffect(() => {
-        dispatch(fetchBaiThi());
+        dispatch(fetchQLDiem());
     }, [dispatch]);
 
     const handleRefresh = async () => {
         setRefreshing(true);
-        await dispatch(fetchBaiThi());
+        await dispatch(fetchQLDiem());
         setRefreshing(false);
     };
 
-    const handleDelete = id => {
-        dispatch(deleteBaiThi(id));
+
+    const handleEdit = diem => {
+        navigation.navigate('EditScreen', { diem });
     };
 
-    const handleEdit = thi => {
-        navigation.navigate('EditScreen', { thi });
-    };
-
-    const handleItemPress = (thi) => {
-        setSelectedThi(thi);
+    const handleItemPress = (diem) => {
+        setSelectedThi(diem);
+        setMaSV(diem.masv_ph46626);
+        setHoTen(diem.ho_ten_ph46626);
+        setHinhAnh(diem.hinh_anh_ph46626);
+        setMaMon(diem.ma_mon_ph46626);
+        setDiemQuaTrinh(diem.diem_qua_trinh_ph46626.toString());
+        setDiemThi(diem.diem_thi_ph46626.toString());
         setModalVisible(true);
     };
 
     const handleCloseModal = () => {
         setModalVisible(false);
-        setSelectedXe(null);
+        setSelectedThi(null);
+        setMaSV('');
+        setHoTen('');
+        setHinhAnh('');
+        setMaMon('');
+        setDiemQuaTrinh('');
+        setDiemThi('');
     };
 
     return (
         <View style={styles.container}>
             <Banner />
             <FlatList
-                data={baiThis}
+                data={Diems}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({ item }) => (
-                    <ListItem xe={item} onDelete={handleDelete} onEdit={handleEdit} onPress={() => handleItemPress(item)} />
+                    <ListItem diem={item} onDelete={handleDelete} onEdit={handleEdit} onPress={() => handleItemPress(item)} />
                 )}
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
-                ListEmptyComponent={<Text style={{flex:1,textAlign:'center'}}>Không có dữ liệu</Text>}
-                ListFooterComponent={loading && 
-                <Text style={{flex:1,textAlign:'center'}}>Đang tải dữ liệu...</Text>}
+                ListEmptyComponent={<Text style={styles.emptyText}>Không có dữ liệu</Text>}
+                ListFooterComponent={loading && <Text style={styles.loadingText}>Đang tải dữ liệu...</Text>}
             />
-            <View style={{ position: 'absolute', backgroundColor: 'lightblue', padding: 20, bottom: 10, right: 10, borderRadius: 100, width: 80, height: 80, justifyContent: 'center' }}>
+            <View style={styles.addButtonContainer}>
                 <TouchableOpacity onPress={() => navigation.navigate('AddScreen')} >
-                    <Text>Thêm</Text>
+                    <Text style={styles.addButtonText}>Thêm</Text>
                 </TouchableOpacity>
             </View>
 
@@ -71,14 +86,15 @@ const MainScreen = ({ navigation }) => {
                 >
                     <View style={styles.modalContainer}>
                         <View style={styles.modalContent}>
-                            <Text style={styles.modalTitle}>Chi tiết thi</Text>
-                            <Text>Họ Tên: {selectedThi.hoten_ph46626}</Text>
-                            <Text>Môn Thi: {selectedThi.mon_thi_ph46626}</Text>
-                            <Text>Ngày thi: {selectedThi.ngay_thi_ph46626}</Text>
-                            <Text>Ca Thi: {selectedThi.ca_thi_ph46626}</Text>
-                            {selectedThi.hinh_anh_ph46626 && (
-                                <Image source={{ uri: selectedThi.hinh_anh_ph46626 }} style={styles.modalImage} />
-                            )}
+                            <Text style={styles.modalTitle}>Chi tiết diem</Text>
+                            <Text>Mã SV: {maSV}</Text>
+                            <Text>Họ Tên: {hoTen}</Text>
+                            <Text>Mã Môn: {maMon}</Text>
+                            <Text>Điểm Quá Trình: {diemQuaTrinh}</Text>
+                            <Text>Điểm Thi: {diemThi}</Text>
+                            {hinhAnh ? (
+                                <Image source={{ uri: hinhAnh }} style={styles.modalImage} />
+                            ) : null}
                             <Pressable onPress={handleCloseModal} style={styles.closeButton}>
                                 <Text>Đóng</Text>
                             </Pressable>
@@ -93,8 +109,32 @@ const MainScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10,
+        padding: 20,
         backgroundColor: '#f5f5f5',
+    },
+    emptyText: {
+        flex: 1,
+        textAlign: 'center',
+        color: 'gray',
+    },
+    loadingText: {
+        flex: 1,
+        textAlign: 'center',
+        color: 'gray',
+    },
+    addButtonContainer: {
+        position: 'absolute',
+        backgroundColor: 'lightblue',
+        padding: 20,
+        bottom: 10,
+        right: 10,
+        borderRadius: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    addButtonText: {
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     modalContainer: {
         flex: 1,

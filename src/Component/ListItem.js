@@ -1,17 +1,17 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const ListItem = ({ thi, onDelete, onEdit, onPress }) => {
+const ListItem = ({diem, onDelete, onEdit, onPress }) => {
     return (
         <View style={styles.itemContainer}>
-            <TouchableOpacity onPress={() => onPress(thi)}>
-                <Text style={styles.itemText}>{thi.hoten_ph46626}</Text>
+            <TouchableOpacity onPress={() => onPress(diem)}>
+                <Text style={styles.itemText}>{diem.masv_ph46626}</Text>
+                <Text style={styles.itemText}>{diem.hoten_ph46626}</Text>
+                <Text style={styles.itemText}>{diem.diem_thi_ph46626}</Text>
+                
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => onEdit(thi)} style={styles.editButton}>
+            <TouchableOpacity onPress={() => onEdit(diem)} style={styles.editButton}>
                 <Text>Sửa</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => onDelete(thi.id)} style={styles.deleteButton}>
-                <Text>Xóa</Text>
             </TouchableOpacity>
         </View>
     );
